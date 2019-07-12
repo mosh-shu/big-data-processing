@@ -36,6 +36,8 @@ for file_spd in files_spd:
 
     idstr = file_spd[-14:-11]
     file_gps = path_gps + "GPS" + idstr + "_conv.csv"
+    file_dst = path_dst + "GPSSPD" + idstr + ".csv"
+
     if file_gps not in files_gps:
         continue
 
@@ -89,8 +91,10 @@ for file_spd in files_spd:
     spd_vel = [] # SPD時刻で補間する時間窓内の速度
     gps_t1 = [] # SPD時刻で補間されるGPS時刻の開始地点
     gps_t2 = [] # SPD時刻で補間されるGPS時刻の終了地点
-    gps_cnt = 0
-    gps_ndata = len(data_gps)
+    gps_cnt = 0 # 読んでいるGPSの行を知るためのカウンター
+    gps_ndata = len(data_gps) # GPSデータの総数
+    data_dst = [] # file_dstに保存する2次元配列
+    samerideFlag = True
 
     print("interpolating gps with spd...")
 
@@ -99,23 +103,38 @@ for file_spd in files_spd:
         # GPS時刻==SPD時刻まで, (間の) SPD時刻をストックしておく
         time_spd = datum_spd[0]
         time_spd_nxt = data_spd[idx_spd+1][0]
-        time_gps = times_gps[0]
-        if time_spd != time_gps and sameride(time_spd, time_spd_nxt):
+        time_gps = data_gps[gps_cnt][2]
+
+        if time_spd != time_gps and sameride(time_spd, time_spd_nxt) and samerideFlag:
             print("hi, time_spd{}, time_gps{}".format(time_spd, time_gps))
             data_spd_btw.append(datum_spd)
             continue
 
+        # データの切れ目は切り捨てる
+        # 終末の切れ端
+        if not sameride(time_spd, time_spd_nxt):
+            data_spd_btw = []
+            samerideFlag = False
+            continue
+        # 始点の切れ端
+        if not samerideFlag:
+            data_spd_btw = []
+            gps_cnt += 1
+            samerideFlag = True
+            continue
+
         # 最初のGPS時刻と最後のGPS時刻は切り捨てる (間が存在しない)
         if gps_cnt == 0:
-            gps_t2 = data_gps[gps_cnt]
             data_spd_btw = []
-            times_gps = times_gps[1:]
             gps_cnt += 1
             continue
         if gps_cnt == gps_ndata-1:
             break
 
-        gps_t1 = gps_t2
+        # 終点のspdも追加する
+        data_spd_btw.append(datum_spd)
+
+        gps_t1 = data_gps[gps_cnt-1]
         gps_t2 = data_gps[gps_cnt]
         vels_spd_btw = [int(datum_spd_btw[1]) for datum_spd_btw in data_spd_btw]
 
@@ -126,10 +145,27 @@ for file_spd in files_spd:
         print(vels_spd_btw)
         print("gps_cnt", gps_cnt)
 
+        vel_total = sum([int(vel_spd_btw) for vel_spd_btw in vels_spd_btw])
+        lon_t1 = float(gps_t1[0])
+        lon_t2 = float(gps_t2[0])
+        lat_t1 = float(gps_t1[1])
+        lat_t2 = float(gps_t2[1])
+        lon_diff = lon_t2-lon_t1
+        lat_diff = lat_t2-lat_t1
+
+        # velによってlon,latを補間する
+        # lon,lat,time,tariff,vel
+        for datum_spd_btw in data_spd_btw:
+            t = datum_spd_btw[0]
+            vel = int(datum_spd_btw[1])
+            lon = lon_t1 + lon_diff * vel/vel_total
+            lat = lat_t1 + lat_diff * vel/vel_total
+            tariff = gps_t1[4]
+            datum_dst = [str(lon), str(lat), t, tariff, str(vel)]
+            data_dst.append(datum_dst)
+
         data_spd_btw = []
-        times_gps = times_gps[1:]
         gps_cnt += 1
-            # times_gps[] は一時変数的な扱い, 使ったらpopしていく
             # if (datum_spd.time not in time_gps) and sameride(datum_spd.time, datum_spd[n+1].time)
             # もしspdの時刻がgpsに含まれておらず (time_gpsの隙間)
             # かつ次のspdの時刻が離れていないなら (時刻がジャンプしていないなら)
@@ -137,3 +173,7 @@ for file_spd in files_spd:
             # else
             # spd_nongps[0] ~ data_spd.timeでGPS位置を補間し, 時間を合わせる処理
             # times_gps[0] = 0
+            
+    with open(file_dst, 'w', encoding="utf_8") as ff:
+        writer = csv.writer(ff, lineterminator='\n')  # 改行コード（\n）を指定しておく
+        writer.writerows(data_dst)  # 2次元配列も書き込める
