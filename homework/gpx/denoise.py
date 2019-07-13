@@ -19,6 +19,6 @@ for row in f:
     out = row
     outs.append(out)
 
-with open(file, 'w') as ff:
+with open(newfile, 'w') as ff:
     writer = csv.writer(ff, lineterminator='\n')  # 改行コード（\n）を指定しておく
     writer.writerows(outs)  # 2次元配列も書き込める
