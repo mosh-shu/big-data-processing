@@ -35,9 +35,10 @@ def getISO8601(s):
 path = sys.argv[1]
 
 files = glob.glob(path + "GPS*.csv")
-outs = [["lon", "lat", "time", "orientation", "tariff", "high"]]
 
 for file in files:
+    outs = [["lon", "lat", "time", "orientation", "tariff", "high"]]
+
     csv_file = open(file, "r", encoding="shift_jis")
     f = csv.reader(csv_file, delimiter=",", lineterminator="\r\n",
                    quotechar='"', skipinitialspace=True)
