@@ -125,6 +125,24 @@ GPSデータには緯度・経度・時刻の他にも様々な情報が含ま�
 
 \subsection{外れ値の除去}
 
+以上の手順で統合した\texttt{all.csv}をプロットしたのがFig. \ref{fig:raw} である. 図の左上に存在する外れ値の影響で, プロットがみにくくなってしまっている. これを解決するため, \texttt{denoise.py} [\ref{denoise}] で一定の範囲内に収まらないプロットは除去した (Fig. \ref{fig:denoise}). 
+
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[clip,width=8cm]{images/allplot_raw.png}
+    \caption{外れ値を含んだデータのプロット.}
+    \label{fig:raw}
+  \end{center}
+\end{figure}
+
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[clip,width=8cm]{images/allplot_denoise.png}
+    \caption{外れ値を除去したデータのプロット.}
+    \label{fig:denoise}
+  \end{center}
+\end{figure}
+
 \subsection{交差点のプロット}
 
 \subsection{高速走行箇所のプロット}
@@ -419,6 +437,33 @@ GPSデータには緯度・経度・時刻の他にも様々な情報が含ま�
       with open(file_dst, 'w', encoding="utf_8") as ff:
           writer = csv.writer(ff, lineterminator='\n')  # 改行コード（\n）を指定しておく
           writer.writerows(data_dst)  # 2次元配列も書き込める
+\end{lstlisting}
+
+\begin{lstlisting}[caption=denoise.py, label=denoise]
+  import csv
+  import sys
+  
+  path = sys.argv[1]
+  
+  file = path + "all.csv"
+  newfile = path + "all_denoise.csv"
+  outs = list()
+  
+  csv_file = open(file, "r", encoding="utf_8")
+  f = csv.reader(csv_file, delimiter=",", lineterminator="\r\n", quotechar='"',
+                 skipinitialspace=True)
+  
+  for row in f:
+      if not 136.4 < float(row[1]) < 137.5:
+          continue
+      if not 34.6 < float(row[0]) < 35.6:
+          continue
+      out = row
+      outs.append(out)
+  
+  with open(newfile, 'w') as ff:
+      writer = csv.writer(ff, lineterminator='\n')  # 改行コード（\n）を指定しておく
+      writer.writerows(outs)  # 2次元配列も書き込める
 \end{lstlisting}
 
 \end{document}
