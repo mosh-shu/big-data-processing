@@ -12,7 +12,7 @@ f = csv.reader(csv_file, delimiter=",", lineterminator="\r\n", quotechar='"',
                skipinitialspace=True)
 
 for row in f:
-    if not 136.4 < float(row[1]) > 137.5:
+    if not 136.4 < float(row[1]) < 137.5:
         continue
     if not 34.6 < float(row[0]) < 35.6:
         continue
