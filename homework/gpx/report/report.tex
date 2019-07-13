@@ -1,288 +1,424 @@
-\documentclass[conference]{IEEEtran}
-\IEEEoverridecommandlockouts
-% The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
-\usepackage{cite}
-\usepackage{amsmath,amssymb,amsfonts}
-\usepackage{algorithmic}
-\usepackage[dvipdfmx]{graphicx}
-\usepackage{textcomp}
-\usepackage{xcolor}
-\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
-    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\documentclass[twocolumn, a4paper, 9pt]{jarticle}
+
+\makeatletter
+\def\section{\@startsection{section}{1}{\z@}{2ex plus .2ex minus .2ex}%
+  {.5ex plus .2ex minus .2ex}{\large\bfseries}}
+\def\thesection{\arabic{section}.}
+\def\subsection{\@startsection{subsection}{1}{\z@}{.7ex plus .2ex minus .2ex}%
+  {.5ex plus .2ex minus .2ex}{\normalsize\bfseries}}
+\def\thesubsection{\arabic{section}.\arabic{subsection}}
+\def\thefootnote{\fnsymbol{footnote}}
+\makeatother
+
+% Aoyama Lab.
+\setlength{\topmargin}{-10mm} % 15mm - 1in
+\setlength{\headheight}{5mm}
+\setlength{\headsep}{5mm}
+\setlength{\oddsidemargin}{-7mm} % 18mm - 1in
+\setlength{\evensidemargin}{-7mm} % 18mm - 1in
+\setlength{\textheight}{247mm} % 297 - 25(top) - 25(bottom)
+\setlength{\textwidth}{174mm} % 210 - 18*2
+\setlength{\columnsep}{7mm}
+
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage[ dvipdfmx]{graphicx}
+\usepackage{url}
+\usepackage{listings}
+
+\lstset{
+  basicstyle={\ttfamily},
+  identifierstyle={\small},
+  commentstyle={\smallitshape},
+  keywordstyle={\small\bfseries},
+  ndkeywordstyle={\small},
+  stringstyle={\small\ttfamily},
+  frame={tb},
+  breaklines=true,
+  columns=[l]{fullflexible},
+  numbers=left,
+  xrightmargin=0zw,
+  xleftmargin=3zw,
+  numberstyle={\scriptsize},
+  stepnumber=1,
+  numbersep=1zw,
+  lineskip=-0.5ex
+}
+
+\pagestyle{empty}
+\thispagestyle{fancy}
+\lhead[]{\fontsize{9pt}{9pt} \sf Keio University Shonan Fujisawa Campus}
+\rhead[]{\today}
+\cfoot[]{}
+\renewcommand{\headrulewidth}{0pt}
+
 \begin{document}
 
-\title{Paper Title*\\
-{\footnotesize \textsuperscript{*}Note: Sub-titles are not captured in Xplore and
-should not be used}
-\thanks{Identify applicable funding agency here. If none, delete this.}
+\twocolumn[
+  \begin{center}
+    {
+      {\bf \Large Prediction of Taxi Accidents in Nagoya Using Big Data\\} % 14.4pt
+    }
+    \vspace{1.5ex}
+    {
+      \fontsize{10.5pt}{10pt}
+      \begin{tabular}{c}
+        坂本 嵩$^\dag$  \\
+        Shu Sakamoto \\
+        71775236
+      \end{tabular}
+    }
+    \vspace{1.5ex}
+  \end{center}
+]
+
+\insert\footins{
+  \noindent
+  \small % 9pt
+  \begin{tabular}{r p{23em}}
+    $^\dag$ & 慶應義塾大学環境情報学部, 〒252-0882 神奈川県藤沢市遠藤5322 \\
+  \end{tabular}
 }
-
-\author{\IEEEauthorblockN{1\textsuperscript{st} Given Name Surname}
-\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-\textit{name of organization (of Aff.)}\\
-City, Country \\
-email address}
-\and
-\IEEEauthorblockN{2\textsuperscript{nd} Given Name Surname}
-\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-\textit{name of organization (of Aff.)}\\
-City, Country \\
-email address}
-\and
-\IEEEauthorblockN{3\textsuperscript{rd} Given Name Surname}
-\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-\textit{name of organization (of Aff.)}\\
-City, Country \\
-email address}
-\and
-\IEEEauthorblockN{4\textsuperscript{th} Given Name Surname}
-\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-\textit{name of organization (of Aff.)}\\
-City, Country \\
-email address}
-\and
-\IEEEauthorblockN{5\textsuperscript{th} Given Name Surname}
-\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-\textit{name of organization (of Aff.)}\\
-City, Country \\
-email address}
-\and
-\IEEEauthorblockN{6\textsuperscript{th} Given Name Surname}
-\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-\textit{name of organization (of Aff.)}\\
-City, Country \\
-email address}
-}
-
-\maketitle
-
-\begin{abstract}
-This document is a model and instructions for \LaTeX.
-This and the IEEEtran.cls file define the components of your paper [title, text, heads, etc.]. *CRITICAL: Do Not Use Symbols, Special Characters, Footnotes, 
-or Math in Paper Title or Abstract.
-\end{abstract}
-
-\begin{IEEEkeywords}
-component, formatting, style, styling, insert
-\end{IEEEkeywords}
 
 \section{Introduction}
-This document is a model and instructions for \LaTeX.
-Please observe the conference page limits. 
+近年, 社会は目まぐるしく変化しており, その中で個人の多様なライフスタイルが尊重される世の中になりつつある. 特に顕著なものとして働き方があげられ, 大企業のオフィスへと画一的に電車で通勤するスタイルから, 様々な働き場所へ自由な交通手段 (車や自転車など) で向かうスタイルが増えた. しかし車通勤で割けられないのは交通事故であり, 我々は常に死と隣り合わせにいると言っても過言ではない. 特に, 交通事故発生件数一位の都道府県として知られる愛知県では, 1年に39,115件の交通事故が発生した (2017年) \cite{ranking}.\\
+悲惨な事故を減らすための有効な手段の一つとして, 頻繁に事故が発生する場所を突き止める箇所を突き止めるという方法がある. ここで本レポートでは, 愛知県名古屋市におけるタクシーの走行データを活用することで, 交通事故が発生しやすい箇所を特定した. 
 
-\section{Ease of Use}
+\section{Data}
+データは授業内で配布された\texttt{NagoyaTaxiData}を用いる. 各々の乗務員にはIDが振り分けられており, それぞれに\texttt{SPD[ID].csv}と\texttt{GPS[ID].csv}のデータが存在する. \\
+\texttt{SPD[ID].csv}はサンプリングレート120Hzで取得されたスピードデータで, \texttt{時刻,速度,相対距離}が含まれた\texttt{csv}ファイルとなっている. これを以後SPDデータと表記する\\
+\texttt{GPS[ID].csv}はサンプリングレート1Hzで取得された位置データで, \texttt{緯度,経度,時刻,測定方位,タリフ状態コード,高速機能}などが含まれた\texttt{csv}ファイルとなっている. これを以後GPSデータと表記する.
 
-\subsection{Maintaining the Integrity of the Specifications}
+\section{解析}
+\subsection{目的}
+この解析の目的は, 交通事故多発地点を特定することである. ここで, 交通事故が起こりやすい条件を整理する. まず, 交差点付近であることがあげられる. 実に, 交通事故の半数以上が交差点で起きている \cite{ranking}. また, 一方もしくは双方の車両が高速で移動していることも事故の要因になりうる. これは, 飛び出しなどの異変に気がついても高速走行をしていてはブレーキが効かないためである. 以上の理由から, この解析では高速で移動している車が多い交差点付近の地点を探すことを目的とした. 
 
-The IEEEtran class file is used to format your paper and style the text. All margins, 
-column widths, line spaces, and text fonts are prescribed; please do not 
-alter them. You may note peculiarities. For example, the head margin
-measures proportionately more than is customary. This measurement 
-and others are deliberate, using specifications that anticipate your paper 
-as one part of the entire proceedings, and not as an independent document. 
-Please do not revise any of the current designations.
+\subsection{手順}
+まず, SPDデータとGPSデータを統合する. これは, 2つのデータのサンプリングレートが違うことを利用し, SPDデータでGPSデータを補間する目的がある. \\
+次に, GoogleMap上に車両の速度が0となっている点をプロットする. これにより, 交差点の位置を把握することができる. \\
+そして, GoogleMap上に車両が高速で移動している点をプロットする. これにより, 車両が高速で通過しがちは交差点を把握すること, すなわち事故多発地点を把握することができる. 
 
-\section{Prepare Your Paper Before Styling}
-Before you begin to format your paper, first write and save the content as a 
-separate text file. Complete all content and organizational editing before 
-formatting. Please note sections \ref{AA}--\ref{SCM} below for more information on 
-proofreading, spelling and grammar.
+\subsection{下処理}
+\subsubsection{SPDデータ}
+SPDデータを目視で確認したところ, 時間順に並んでいなかった. これではGPSデータとの統合を行う際に不便なため, \texttt{sortspd.sh} [\ref{sortspd}] を用いて時刻順にSPDデータを並べ替えた. 
 
-Keep your text and graphic files separate until after the text has been 
-formatted and styled. Do not number text heads---{\LaTeX} will do that 
-for you.
+\subsubsection{GPSデータ}
+GPSデータには緯度・経度・時刻の他にも様々な情報が含まれているため, これらを取り除く必要がある. また, 緯度・経度情報がデータ独自の方法で表記されているため, これを元に戻す必要がある. 方法は以下の通りである (緯度の場合). 
 
-\subsection{Abbreviations and Acronyms}\label{AA}
-Define abbreviations and acronyms the first time they are used in the text, 
-even after they have been defined in the abstract. Abbreviations such as 
-IEEE, SI, MKS, CGS, ac, dc, and rms do not have to be defined. Do not use 
-abbreviations in the title or heads unless they are unavoidable.
+\begin{enumerate}
+  \item 8bitで表記されている情報を2bitずつに分割し, それぞれを8桁の2進数で表示する. e.g.) \texttt{01 02 58 66} → \texttt{00000001 00000010 00111010 01000010}
+  \item それぞれの8bitデータの最初の1bitを取り除く. e.g.) \texttt{00000001 00000010 00111010 01000010} → \texttt{0000001 0000010 0111010 1000010}
+  \item これを結合する. e.g.) \texttt{0000001 0000010 0111010 1000010} →　\texttt{0000001000001001110101000010}
+  \item これを4bitごとに区切る. e.g.) \texttt{0000001000001001110101000010} → \texttt{0000 0010 0000 1001 1101 0100 0010}
+  \item 4bitデータをそれぞれ16進数に変換する. e.g.) \texttt{0000 0010 0000 1001 1101 0100 0010} → \texttt{0 2 0 9 D 4 2}
+  \item これを結合する e.g.) \texttt{0 2 0 9 D 4 2} → \texttt{0209D42}
+  \item これを10進数に変換する. e.g.) \texttt{0209D42} → \texttt{2137410}
+  \item 10進数データを60000で除算すると, データが復元される \texttt{2137410} →　\texttt{35.6235}. 
+\end{enumerate}
 
-\subsection{Units}
-\begin{itemize}
-\item Use either SI (MKS) or CGS as primary units. (SI units are encouraged.) English units may be used as secondary units (in parentheses). An exception would be the use of English units as identifiers in trade, such as ``3.5-inch disk drive''.
-\item Avoid combining SI and CGS units, such as current in amperes and magnetic field in oersteds. This often leads to confusion because equations do not balance dimensionally. If you must use mixed units, clearly state the units for each quantity that you use in an equation.
-\item Do not mix complete spellings and abbreviations of units: ``Wb/m\textsuperscript{2}'' or ``webers per square meter'', not ``webers/m\textsuperscript{2}''. Spell out units when they appear in text: ``. . . a few henries'', not ``. . . a few H''.
-\item Use a zero before decimal points: ``0.25'', not ``.25''. Use ``cm\textsuperscript{3}'', not ``cc''.)
-\end{itemize}
+これを, \texttt{convertTracking.py} [\ref{convertTracking}] を用いて行った. \\
 
-\subsection{Equations}
-Number equations consecutively. To make your 
-equations more compact, you may use the solidus (~/~), the exp function, or 
-appropriate exponents. Italicize Roman symbols for quantities and variables, 
-but not Greek symbols. Use a long dash rather than a hyphen for a minus 
-sign. Punctuate equations with commas or periods when they are part of a 
-sentence, as in:
-\begin{equation}
-a+b=\gamma\label{eq}
-\end{equation}
+\subsection{SPDデータとGPSデータの統合}
 
-Be sure that the 
-symbols in your equation have been defined before or immediately following 
-the equation. Use ``\eqref{eq}'', not ``Eq.~\eqref{eq}'' or ``equation \eqref{eq}'', except at 
-the beginning of a sentence: ``Equation \eqref{eq} is . . .''
+上記の方法で下処理が完了したSPDデータとGPSデータを, \texttt{spdgps.py} [\ref{spdgps}] を用いて統合する. このプログラムでは, SPDデータを60Hzにダウンサンプリングした上で, SPDデータの速度情報を用いてGPSデータを補間する. 最終的にはサンプリングレート60Hzの速度情報と位置情報を持ったSPDGPSデータが出力される. また, SPDデータもしくはGPSデータが存在しない点に関しては取り除く. その他細かい手順はプログラム及びそのコメントに譲る. \\
+また, これらのデータを \texttt{cat SPDGPS*.csv > all.csv} コマンドを用いて一つのファイルに統合する. 
 
-\subsection{\LaTeX-Specific Advice}
+\subsection{外れ値の除去}
 
-Please use ``soft'' (e.g., \verb|\eqref{Eq}|) cross references instead
-of ``hard'' references (e.g., \verb|(1)|). That will make it possible
-to combine sections, add equations, or change the order of figures or
-citations without having to go through the file line by line.
+\subsection{交差点のプロット}
 
-Please don't use the \verb|{eqnarray}| equation environment. Use
-\verb|{align}| or \verb|{IEEEeqnarray}| instead. The \verb|{eqnarray}|
-environment leaves unsightly spaces around relation symbols.
+\subsection{高速走行箇所のプロット}
 
-Please note that the \verb|{subequations}| environment in {\LaTeX}
-will increment the main equation counter even when there are no
-equation numbers displayed. If you forget that, you might write an
-article in which the equation numbers skip from (17) to (20), causing
-the copy editors to wonder if you've discovered a new method of
-counting.
+\subsection{交通事故多発地点の特定}
 
-{\BibTeX} does not work by magic. It doesn't get the bibliographic
-data from thin air but from .bib files. If you use {\BibTeX} to produce a
-bibliography you must send the .bib files. 
+\section{まとめ}
 
-{\LaTeX} can't read your mind. If you assign the same label to a
-subsubsection and a table, you might find that Table I has been cross
-referenced as Table IV-B3. 
+以上の解析を用いて交通事故多発地点と思われる場所を探すことができた. また, これらの地点は実際の交通事故多発地点とある程度一致した. 今後の解析として, 場所情報のみならず地形や建物の情報, つまり見通しなども考慮することでより正確な予測をしたい. 
 
-{\LaTeX} does not have precognitive abilities. If you put a
-\verb|\label| command before the command that updates the counter it's
-supposed to be using, the label will pick up the last counter to be
-cross referenced instead. In particular, a \verb|\label| command
-should not go before the caption of a figure or a table.
+\bibliographystyle{jplain}
+\bibliography{report}
 
-Do not use \verb|\nonumber| inside the \verb|{array}| environment. It
-will not stop equation numbers inside \verb|{array}| (there won't be
-any anyway) and it might stop a wanted equation number in the
-surrounding equation.
+\onecolumn
 
-\subsection{Some Common Mistakes}\label{SCM}
-\begin{itemize}
-\item The word ``data'' is plural, not singular.
-\item The subscript for the permeability of vacuum $\mu_{0}$, and other common scientific constants, is zero with subscript formatting, not a lowercase letter ``o''.
-\item In American English, commas, semicolons, periods, question and exclamation marks are located within quotation marks only when a complete thought or name is cited, such as a title or full quotation. When quotation marks are used, instead of a bold or italic typeface, to highlight a word or phrase, punctuation should appear outside of the quotation marks. A parenthetical phrase or statement at the end of a sentence is punctuated outside of the closing parenthesis (like this). (A parenthetical sentence is punctuated within the parentheses.)
-\item A graph within a graph is an ``inset'', not an ``insert''. The word alternatively is preferred to the word ``alternately'' (unless you really mean something that alternates).
-\item Do not use the word ``essentially'' to mean ``approximately'' or ``effectively''.
-\item In your paper title, if the words ``that uses'' can accurately replace the word ``using'', capitalize the ``u''; if not, keep using lower-cased.
-\item Be aware of the different meanings of the homophones ``affect'' and ``effect'', ``complement'' and ``compliment'', ``discreet'' and ``discrete'', ``principal'' and ``principle''.
-\item Do not confuse ``imply'' and ``infer''.
-\item The prefix ``non'' is not a word; it should be joined to the word it modifies, usually without a hyphen.
-\item There is no period after the ``et'' in the Latin abbreviation ``et al.''.
-\item The abbreviation ``i.e.'' means ``that is'', and the abbreviation ``e.g.'' means ``for example''.
-\end{itemize}
-An excellent style manual for science writers is \cite{b7}.
+\begin{lstlisting}[caption=sortspd.sh, label=sortspd]
+  # SPD.csvを時刻順に処理する
+  # ./sortspd SpeedData/*
+  path=$1
+  files=`find $path -maxdepth 1 -type f -name SPD*.csv`
+  
+  for file in $files;
+  do
+      newfile="${file:0:-4}_sorted.csv"
+      echo $newfile
+      sort -t , -k 1 $file > $newfile
+  done  
+\end{lstlisting}
 
-\subsection{Authors and Affiliations}
-\textbf{The class file is designed for, but not limited to, six authors.} A 
-minimum of one author is required for all conference articles. Author names 
-should be listed starting from left to right and then moving down to the 
-next line. This is the author sequence that will be used in future citations 
-and by indexing services. Names should not be listed in columns nor group by 
-affiliation. Please keep your affiliations as succinct as possible (for 
-example, do not differentiate among departments of the same organization).
+\begin{lstlisting}[caption=convertTracking.py, label=convertTracking]
 
-\subsection{Identify the Headings}
-Headings, or heads, are organizational devices that guide the reader through 
-your paper. There are two types: component heads and text heads.
+  # python convertTracking.py TrackingData/
+  import csv
+  import sys
+  import glob
+  
+  
+  def getDegree(s):
+      v0_bin = format(int(s[0:2], 16), 'b').zfill(8)
+      v1_bin = format(int(s[2:4], 16), 'b').zfill(8)
+      v2_bin = format(int(s[4:6], 16), 'b').zfill(8)
+      v3_bin = format(int(s[6:8], 16), 'b').zfill(8)
+  
+      bin_bit = v0_bin[1:] + v1_bin[1:] + v2_bin[1:] + v3_bin[1:]
+  
+      hex_int = ''
+      for i in range(7):
+          hex_int += str(format(int(bin_bit[i*4:i*4+4], 2), 'x'))
+  
+      dec_int = int(hex_int, 16)
+  
+      deg = dec_int / 60000.0
+  
+      return str(deg)
+  
+  
+  def getISO8601(s):
+      ye = int(s[0:2]) + 2000
+      mo = int(s[2:4])
+      da = int(s[4:6])
+      h = int(s[8:10])
+      m = int(s[10:12])
+      s = int(s[12:14])
+      return ("{:04}-{:02}-{:02}T{:02}:{:02}:{:02}+09:00".format(ye, mo, da, h, m, s))
+  
+  
+  path = sys.argv[1]
+  
+  files = glob.glob(path + "GPS*.csv")
+  
+  for file in files:
+      outs = [["lon", "lat", "time", "orientation", "tariff", "high"]]
+  
+      csv_file = open(file, "r", encoding="shift_jis")
+      f = csv.reader(csv_file, delimiter=",", lineterminator="\r\n",
+                     quotechar='"', skipinitialspace=True)
+  
+      print(file)
+  
+      for row in f:
+          if row == []:
+              continue
+          lon = getDegree(row[0][0:8])
+          lat = getDegree(row[0][8:16])
+          time = getISO8601(row[0][16:30])
+          orientation = str(int(row[0][30:34], 16))
+          tariff = row[1]
+          high = row[2][0:2]
+          out = [lon, lat, time, orientation, tariff, high]
+          outs.append(out)
+  
+      outfile = file[:-4] + "_conv.csv"
+  
+      with open(outfile, 'w', encoding="utf_8") as ff:
+          writer = csv.writer(ff, lineterminator='\n')  # 改行コード（\n）を指定しておく
+          writer.writerows(outs)  # 2次元配列も書き込める
+\end{lstlisting}  
 
-Component heads identify the different components of your paper and are not 
-topically subordinate to each other. Examples include Acknowledgments and 
-References and, for these, the correct style to use is ``Heading 5''. Use 
-``figure caption'' for your Figure captions, and ``table head'' for your 
-table title. Run-in heads, such as ``Abstract'', will require you to apply a 
-style (in this case, italic) in addition to the style provided by the drop 
-down menu to differentiate the head from the text.
+\begin{lstlisting}[caption=spdgps.py, label=spdgps]
+  import csv, sys, glob, datetime, pprint
 
-Text heads organize the topics on a relational, hierarchical basis. For 
-example, the paper title is the primary text head because all subsequent 
-material relates and elaborates on this one topic. If there are two or more 
-sub-topics, the next level head (uppercase Roman numerals) should be used 
-and, conversely, if there are not at least two sub-topics, then no subheads 
-should be introduced.
-
-\subsection{Figures and Tables}
-\paragraph{Positioning Figures and Tables} Place figures and tables at the top and 
-bottom of columns. Avoid placing them in the middle of columns. Large 
-figures and tables may span across both columns. Figure captions should be 
-below the figures; table heads should appear above the tables. Insert 
-figures and tables after they are cited in the text. Use the abbreviation 
-``Fig.~\ref{fig}'', even at the beginning of a sentence.
-
-\begin{table}[htbp]
-\caption{Table Type Styles}
-\begin{center}
-\begin{tabular}{|c|c|c|c|}
-\hline
-\textbf{Table}&\multicolumn{3}{|c|}{\textbf{Table Column Head}} \\
-\cline{2-4} 
-\textbf{Head} & \textbf{\textit{Table column subhead}}& \textbf{\textit{Subhead}}& \textbf{\textit{Subhead}} \\
-\hline
-copy& More table copy$^{\mathrm{a}}$& &  \\
-\hline
-\multicolumn{4}{l}{$^{\mathrm{a}}$Sample of a Table footnote.}
-\end{tabular}
-\label{tab1}
-\end{center}
-\end{table}
-
-\begin{figure}[htbp]
-\centerline{\includegraphics[width=7.0cm]{./images/cat.jpg}}
-\caption{Example of a figure caption.}
-\label{fig}
-\end{figure}
-
-Figure Labels: Use 8 point Times New Roman for Figure labels. Use words 
-rather than symbols or abbreviations when writing Figure axis labels to 
-avoid confusing the reader. As an example, write the quantity 
-``Magnetization'', or ``Magnetization, M'', not just ``M''. If including 
-units in the label, present them within parentheses. Do not label axes only 
-with units. In the example, write ``Magnetization (A/m)'' or ``Magnetization 
-\{A[m(1)]\}'', not just ``A/m''. Do not label axes with a ratio of 
-quantities and units. For example, write ``Temperature (K)'', not 
-``Temperature/K''.
-
-\section*{Acknowledgment}
-
-The preferred spelling of the word ``acknowledgment'' in America is without 
-an ``e'' after the ``g''. Avoid the stilted expression ``one of us (R. B. 
-G.) thanks $\ldots$''. Instead, try ``R. B. G. thanks$\ldots$''. Put sponsor 
-acknowledgments in the unnumbered footnote on the first page.
-
-\section*{References}
-
-Please number citations consecutively within brackets \cite{b1}. The 
-sentence punctuation follows the bracket \cite{b2}. Refer simply to the reference 
-number, as in \cite{b3}---do not use ``Ref. \cite{b3}'' or ``reference \cite{b3}'' except at 
-the beginning of a sentence: ``Reference \cite{b3} was the first $\ldots$''
-
-Number footnotes separately in superscripts. Place the actual footnote at 
-the bottom of the column in which it was cited. Do not put footnotes in the 
-abstract or reference list. Use letters for table footnotes.
-
-Unless there are six authors or more give all authors' names; do not use 
-``et al.''. Papers that have not been published, even if they have been 
-submitted for publication, should be cited as ``unpublished'' \cite{b4}. Papers 
-that have been accepted for publication should be cited as ``in press'' \cite{b5}. 
-Capitalize only the first word in a paper title, except for proper nouns and 
-element symbols.
-
-For papers published in translation journals, please give the English 
-citation first, followed by the original foreign-language citation \cite{b6}.
-
-\begin{thebibliography}{00}
-\bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
-\bibitem{b2} J. Clerk Maxwell, A Treatise on Electricity and Magnetism, 3rd ed., vol. 2. Oxford: Clarendon, 1892, pp.68--73.
-\bibitem{b3} I. S. Jacobs and C. P. Bean, ``Fine particles, thin films and exchange anisotropy,'' in Magnetism, vol. III, G. T. Rado and H. Suhl, Eds. New York: Academic, 1963, pp. 271--350.
-\bibitem{b4} K. Elissa, ``Title of paper if known,'' unpublished.
-\bibitem{b5} R. Nicole, ``Title of paper with only first word capitalized,'' J. Name Stand. Abbrev., in press.
-\bibitem{b6} Y. Yorozu, M. Hirano, K. Oka, and Y. Tagawa, ``Electron spectroscopy studies on magneto-optical media and plastic substrate interface,'' IEEE Transl. J. Magn. Japan, vol. 2, pp. 740--741, August 1987 [Digests 9th Annual Conf. Magnetics Japan, p. 301, 1982].
-\bibitem{b7} M. Young, The Technical Writer's Handbook. Mill Valley, CA: University Science, 1989.
-\end{thebibliography}
-\vspace{12pt}
-\color{red}
-IEEE conference templates contain guidance text for composing and formatting conference papers. Please ensure that all template text is removed from your conference paper prior to submission to the conference. Failure to remove the template text from your paper may result in your paper not being published.
+  ## functions
+  
+  def time_spd2gps(tstr: str) -> str:
+      '''
+      SPDデータの時刻を, GPSデータの表記に合わせる. 
+      Input: 
+          tstr: SPDデータの時刻. str型. 
+      Output:
+          GPSデータ表記の時刻. str型. 
+      '''
+      ye = tstr[0:4]
+      mo = tstr[5:7]
+      da = tstr[8:10]
+      h = tstr[11:13]
+      m = tstr[14:16]
+      s = tstr[17:19]
+  
+      return ("{}-{}-{}T{}:{}:{}+09:00".format(ye, mo, da, h, m, s))
+  
+  def sameride(tstr1: str, tstr2: str) -> bool:
+      '''
+      2つ時刻データ (tstr1, tstr2) が1秒より離れていないか確かめる (データの切れ目をdetectする).
+      Input:
+          tstr1: 1つ目の時刻データ. str型.
+          tstr2: 2つ目の時刻データ. str型.
+      Output:
+          Bool型. tstr1とtstr2が1秒より離れていなければTrue.それ以外はFalse.
+      '''
+      t1 = datetime.datetime(year=int(tstr1[0:4]), month=int(tstr1[5:7]), day=int(tstr1[8:10]),
+                             hour=int(tstr1[11:13]), minute=int(tstr1[14:16]), second=int(tstr1[17:19]))
+      t2 = datetime.datetime(year=int(tstr2[0:4]), month=int(tstr2[5:7]), day=int(tstr2[8:10]),
+                             hour=int(tstr2[11:13]), minute=int(tstr2[14:16]), second=int(tstr2[17:19]))
+      diff = t2 - t1
+      return diff.total_seconds() < 2
+  
+  ## init
+  path_gps = sys.argv[1]  # nagoya/TrackingData/
+  path_spd = sys.argv[2]  # nagoya/SpeedData/
+  path_dst = sys.argv[3]  # nagoya/TrackingSpeedData/
+  
+  files_gps = glob.glob(path_gps + "GPS*_conv.csv")
+  files_spd = glob.glob(path_spd + "SPD*_sorted.csv")
+  
+  ## main
+  for file_spd in files_spd:
+  
+      idstr = file_spd[-14:-11]
+      file_gps = path_gps + "GPS" + idstr + "_conv.csv"
+      file_dst = path_dst + "GPSSPD" + idstr + ".csv"
+  
+      if file_gps not in files_gps:
+          continue
+  
+      print("reading {}...".format(file_spd))
+  
+      # spd の読み込み
+      # 2013/08/01 08:53:01.0,0,0
+      data_spd = []
+      times_spd = []
+      with open(file_spd, 'r') as f:
+          reader = csv.reader(f)
+          for row in reader:
+              if row == []:
+                  continue
+              if row[0][-1] == '5': # ダウンサンプリング
+                  continue
+  
+              row[0] = time_spd2gps(row[0])
+              data_spd.append(row)
+              times_spd.append(row[0])
+  
+      print("reading {}...".format(file_gps))
+  
+      # gps の読み込み
+      # ヘッダあり, 35.130516666666665,136.98396666666667,2013-07-31T20:32:15+09:00,2661,00,00
+      data_gps = []
+      times_gps = []
+      last_row = []
+      with open(file_gps, 'r') as f:
+          reader = csv.reader(f)
+          header = next(reader)
+          for row in reader:
+              #  もしgpsの時刻がspdになければ, 行を削除
+              # そうでなければ二次元配列data_gpsに格納
+              # 時刻をtime_gpsに格納
+              if row == []:
+                  continue
+  
+              time_gps = row[2]
+              if not time_gps in times_spd:
+                  continue
+              if row==last_row:
+                  # print(row)
+                  continue
+              times_gps.append(time_gps)
+              data_gps.append(row)
+              last_row = row
+  
+      # print("data_spd")
+      # pprint.pprint(data_spd[:10], width=50)
+      # print("data_gps")
+      # pprint.pprint(data_gps[:10], width=50)
+  
+      data_spd_btw = []           # GPS時刻の間にあるSPDデータ
+      spd_vel = []                # SPD時刻で補間する時間窓内の速度
+      gps_t1 = []                 # SPD時刻で補間されるGPS時刻の開始地点
+      gps_t2 = []                 # SPD時刻で補間されるGPS時刻の終了地点
+      idx_gps = 0                 # 読んでいるGPSの行を知るためのカウンター
+      gps_ndata = len(data_gps)   # GPSデータの総数
+      spd_ndata = len(data_spd)   # SPDデータの総数
+      data_dst = []               # file_dstに保存する2次元配列
+      samerideFlag = True
+  
+      print("interpolating gps with spd...")
+  
+      for idx_spd, datum_spd in enumerate(data_spd):
+  
+          # データが最後に到達したら処理を終える
+          if idx_gps == gps_ndata-1 or idx_spd == spd_ndata-1:
+              print("\ngps_ndata: {}\nidx_gps: {}\nspd_ndata: {}\nidx_spd: {}"\
+                      .format(gps_ndata, idx_gps, spd_ndata, idx_spd))
+              break
+  
+          # if idx_spd%100000 == 0: print("\nidx_spd: ",str(idx_spd))
+  
+          # GPS時刻==SPD時刻まで, (間の) SPD時刻をストックしておく
+          time_spd = datum_spd[0]
+          time_spd_nxt = data_spd[idx_spd+1][0]
+          time_gps = data_gps[idx_gps][2]
+  
+          if time_spd != time_gps and sameride(time_spd, time_spd_nxt):
+              # print("hi, time_spd{}, time_gps{}".format(time_spd, time_gps))
+              data_spd_btw.append(datum_spd)
+              continue
+  
+          # データの切れ目は切り捨てる
+          # 終末の切れ端
+          if not sameride(time_spd, time_spd_nxt):
+              print("not sameride, idx is {}, data is {}".format(idx_spd, datum_spd))
+              # print("previous time_gps: {}\ntime_gps: {}\nnext time_gps: {}\ntime_spd: {}\n".\
+                      # format(data_gps[idx_gps-1][2], time_gps, data_gps[idx_gps+1][2], time_spd))            
+              data_spd_btw = []
+              samerideFlag = False
+              continue
+          # 始点の切れ端
+          if time_gps==time_spd and not samerideFlag:
+              print("not samerideFlag, idx is {}, data is {}\n".format(idx_spd, datum_spd))
+              # print("time_gps: {}\nnext time_gps: {}\ntime_spd: {}\n\n".format(time_gps, data_gps[idx_gps+1][2], time_spd))
+              data_spd_btw = []
+              idx_gps += 1
+              samerideFlag = True
+              continue
+  
+          # 最初のGPS時刻は切り捨てる
+          if idx_gps == 0:
+              data_spd_btw = []
+              idx_gps += 1
+              continue
+  
+          # 補間処理
+          # 終点のspdも追加する
+          data_spd_btw.append(datum_spd)
+  
+          gps_t1 = data_gps[idx_gps-1]
+          gps_t2 = data_gps[idx_gps]
+          vels_spd_btw = [int(datum_spd_btw[1]) for datum_spd_btw in data_spd_btw]
+  
+          vel_total = sum([int(vel_spd_btw) for vel_spd_btw in vels_spd_btw]) + 1 # to avoid div0
+          lon_t1 = float(gps_t1[0])
+          lon_t2 = float(gps_t2[0])
+          lat_t1 = float(gps_t1[1])
+          lat_t2 = float(gps_t2[1])
+          lon_diff = lon_t2-lon_t1
+          lat_diff = lat_t2-lat_t1
+  
+          # velによってlon,latを補間する
+          # lon,lat,time,tariff,vel
+          for datum_spd_btw in data_spd_btw:
+              t = datum_spd_btw[0]
+              vel = int(datum_spd_btw[1])
+              lon = lon_t1 + lon_diff * vel/vel_total
+              lat = lat_t1 + lat_diff * vel/vel_total
+              tariff = gps_t1[4]
+              datum_dst = [str(lon), str(lat), t, tariff, str(vel)]
+              data_dst.append(datum_dst)
+  
+          data_spd_btw = []
+          idx_gps += 1
+      
+      # ファイルに書き込み
+      with open(file_dst, 'w', encoding="utf_8") as ff:
+          writer = csv.writer(ff, lineterminator='\n')  # 改行コード（\n）を指定しておく
+          writer.writerows(data_dst)  # 2次元配列も書き込める
+\end{lstlisting}
 
 \end{document}
