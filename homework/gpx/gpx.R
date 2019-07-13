@@ -1,8 +1,10 @@
+# 生データのプロット
 track <- read.csv("nagoya/TrackingSpeedData/all.csv", header=F)
 png("report/images/allplot_raw.png", width = 700, height = 700)  # 描画デバイスを開く
 plot(track[,2], track[,1])
 dev.off()
 
+# 外れ値を覗いたプロット
 track_d <- read.csv("nagoya/TrackingSpeedData/all_denoise.csv", header=F)
 png("report/images/allplot_denoise.png", width = 700, height = 700)  # 描画デバイスを開く
 plot(track_d[,2], track_d[,1])
