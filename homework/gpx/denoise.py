@@ -4,6 +4,7 @@ import sys
 path = sys.argv[1]
 
 file = path + "all.csv"
+newfile = path + "all_denoise.csv"
 outs = list()
 
 csv_file = open(file, "r", encoding="utf_8")
@@ -11,10 +12,10 @@ f = csv.reader(csv_file, delimiter=",", lineterminator="\r\n", quotechar='"',
                skipinitialspace=True)
 
 for row in f:
-    if float(row[1]) > 200:
+    if not 136.4 < float(row[1]) > 137.5:
         print(row)
         continue
-    if float(row[0]) > 35.7:
+    if not 34.6 < float(row[0]) < 35.6:
         print(row)
         continue
     out = row
